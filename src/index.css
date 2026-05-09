@@ -845,12 +845,14 @@ select option {
 }
 
 @media (max-width: 420px) {
-  .brand-subtitle {
-    display: none;
-  }
-
   .brand-text .font-display {
     font-size: 1rem;
+  }
+
+  .brand-subtitle {
+    display: block;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
   }
 
   header nav {
@@ -858,8 +860,8 @@ select option {
   }
 
   .logo-mark {
-    width: 3rem;
-    height: 3rem;
+    width: 2.85rem;
+    height: 2.85rem;
   }
 
   .hero-copy h1 {

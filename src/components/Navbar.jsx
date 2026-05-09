@@ -35,9 +35,6 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          <a className="btn-primary hidden lg:inline-flex" href={bookingUrl} target="_blank" rel="noreferrer">
-            Book
-          </a>
           <button className="icon-button lg:hidden" type="button" aria-label="Toggle menu" onClick={() => setOpen((value) => !value)}>
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>

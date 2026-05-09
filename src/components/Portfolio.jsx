@@ -7,8 +7,6 @@ export default function Portfolio() {
   const [active, setActive] = useState(null)
   const [current, setCurrent] = useState(0)
   const items = portfolio
-  const activeItem = items[current] ?? items[0]
-
   const goTo = (direction) => {
     if (items.length <= 1) return
     setCurrent((value) => (value + direction + items.length) % items.length)
@@ -83,10 +81,8 @@ export default function Portfolio() {
           </button>
         </div>
 
-        {activeItem && (
+        {items.length > 1 && (
           <div className="mt-7 text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--gold)]">{activeItem.category}</p>
-            <h3 className="font-display mt-1 text-4xl font-bold">{activeItem.title}</h3>
             <div className="mt-4 flex justify-center gap-2">
               {items.map((item, index) => (
                 <button
@@ -121,10 +117,6 @@ export default function Portfolio() {
                 <img className="photo" src={active.image} alt={`${active.title} preview`} style={{ '--image-position': active.position }} />
               </div>
             )}
-            <div className="p-3">
-              <p className="section-kicker">{active.category}</p>
-              <h3 className="font-display text-4xl font-bold">{active.title}</h3>
-            </div>
           </div>
         </div>
       )}

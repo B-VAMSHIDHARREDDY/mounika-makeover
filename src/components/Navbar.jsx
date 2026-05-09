@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
-import ThemeToggle from './ThemeToggle.jsx'
 import { whatsappNumber } from '../data.js'
 
 const links = [
@@ -10,7 +9,7 @@ const links = [
   ['Contact', '#contact'],
 ]
 
-export default function Navbar({ darkMode, onToggleTheme }) {
+export default function Navbar() {
   const [open, setOpen] = useState(false)
   const bookingUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hi Mounika, I want to book a bridal makeover appointment.')}`
 
@@ -36,7 +35,6 @@ export default function Navbar({ darkMode, onToggleTheme }) {
         </div>
 
         <div className="flex items-center gap-2">
-          <ThemeToggle darkMode={darkMode} onToggle={onToggleTheme} />
           <a className="btn-primary hidden lg:inline-flex" href={bookingUrl} target="_blank" rel="noreferrer">
             Book
           </a>

@@ -13,12 +13,11 @@ import Testimonials from '../components/Testimonials.jsx'
 import { whatsappNumber } from '../data.js'
 
 export default function Home() {
-  const [darkMode, setDarkMode] = useState(false)
   const [showIntro, setShowIntro] = useState(true)
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode)
-  }, [darkMode])
+    document.documentElement.classList.add('dark')
+  }, [])
 
   useEffect(() => {
     const timer = window.setTimeout(() => setShowIntro(false), 3000)
@@ -28,7 +27,7 @@ export default function Home() {
   return (
     <>
       <AnimatePresence>{showIntro && <IntroSplash />}</AnimatePresence>
-      <Navbar darkMode={darkMode} onToggleTheme={() => setDarkMode((value) => !value)} />
+      <Navbar />
       <main>
         <Hero />
         <Services />

@@ -755,14 +755,24 @@ select option {
   .mobile-cta {
     display: flex;
     position: fixed;
-    left: 12px;
-    right: 12px;
+    left: 50%;
+    right: auto;
     bottom: 12px;
+    width: auto;
+    min-height: 44px;
+    max-width: calc(100% - 24px);
+    padding: 0.72rem 1.05rem;
+    transform: translateX(-50%);
+    white-space: nowrap;
     z-index: 50;
   }
 
+  .mobile-cta:hover {
+    transform: translateX(-50%) translateY(-2px);
+  }
+
   body {
-    padding-bottom: 74px;
+    padding-bottom: 62px;
   }
 
   .gallery-stage {

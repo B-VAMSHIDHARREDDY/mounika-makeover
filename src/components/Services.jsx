@@ -5,6 +5,25 @@ import { services } from '../data.js'
 
 const icons = [Sparkles, Brush, Flower2]
 
+const serviceCardVariants = {
+  hidden: (index) => ({
+    opacity: 0,
+    x: index % 2 === 0 ? -56 : 56,
+    y: 18,
+    scale: 0.97,
+  }),
+  visible: {
+    opacity: 1,
+    x: 0,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.55,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+}
+
 export default function Services() {
   const [activeService, setActiveService] = useState(null)
 
@@ -19,20 +38,18 @@ export default function Services() {
           </p>
         </div>
 
-        <motion.div
-          className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
-        >
+        <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {services.map((service, index) => {
             const Icon = icons[index % icons.length]
             return (
               <motion.article
                 key={service.title}
                 className="service-card glass group overflow-hidden rounded-3xl p-3 transition hover:border-[var(--gold)]"
-                variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }}
+                custom={index}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.12, margin: '0px 0px -8% 0px' }}
+                variants={serviceCardVariants}
                 whileHover={{ y: -8, rotateX: 2, rotateY: index % 2 === 0 ? -2 : 2 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -46,7 +63,7 @@ export default function Services() {
                     className="photo group-hover:scale-[1.04]"
                     src={service.image}
                     alt={`${service.title} by Mounika Makeover`}
-                    loading="lazy"
+                    loading={index < 2 ? 'eager' : 'lazy'}
                     style={{ '--image-position': service.position }}
                   />
                   <span className="service-image-hint">Tap to view</span>
@@ -61,7 +78,7 @@ export default function Services() {
               </motion.article>
             )
           })}
-        </motion.div>
+        </div>
       </div>
 
       {activeService && (

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.env.*
+image-originals-backup/
+*.mhtml
+public/videos/*.mp4
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

@@ -41,9 +41,11 @@ export const services = [
 ]
 
 export const portfolio = [
+  { title: 'Pink Bridal Glow', category: 'Bridal', image: '/images/bridal-pink-closeup.jpeg', position: 'center top' },
+  { title: 'Pink Stage Bridal Look', category: 'Bridal', image: '/images/bridal-pink-stage-full.jpeg', position: 'center top' },
+  { title: 'Blue Silk Bridal Portrait', category: 'Bridal', image: '/images/new-images/542737449_1693564621307243_4782602409412770457_n.jpg', position: 'center top' },
   { title: 'Red Bridal Garland Detail', category: 'Bridal', image: '/images/new-images/530831893_24476739741942940_5542949136742357119_n.jpg', position: 'center top' },
   { title: 'Pink Silk Bridal Look', category: 'Bridal', image: '/images/new-images/532540316_746329554988177_1890423555787936775_n.jpg', position: 'center top' },
-  { title: 'Blue Silk Bridal Portrait', category: 'Bridal', image: '/images/new-images/542737449_1693564621307243_4782602409412770457_n.jpg', position: 'center top' },
   { title: 'Purple Bridal Portrait', category: 'Bridal', image: '/images/new-images/626803653_18074751887374570_4042805067393126466_n.jpg', position: 'center top' },
   { title: 'Stage Bridal Look', category: 'Bridal', image: '/images/new-images/627319075_18162333961410773_6941707593190754501_n.jpg', position: 'center center' },
   { title: 'Ceremony Bridal Seat', category: 'Bridal', image: '/images/new-images/627973602_18304647205256180_5259058106997991547_n.jpg', position: 'center center' },

@@ -1,24 +1,31 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { Brush, Flower2, Sparkles, X } from 'lucide-react'
 import { services } from '../data.js'
 
 const icons = [Sparkles, Brush, Flower2]
 
+const servicesGridVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.07,
+    },
+  },
+}
+
 const serviceCardVariants = {
-  hidden: (index) => ({
+  hidden: {
     opacity: 0,
-    x: index % 2 === 0 ? -56 : 56,
     y: 18,
-    scale: 0.97,
-  }),
+    scale: 0.985,
+  },
   visible: {
     opacity: 1,
-    x: 0,
     y: 0,
     scale: 1,
     transition: {
-      duration: 0.55,
+      duration: 0.46,
       ease: [0.22, 1, 0.36, 1],
     },
   },
@@ -26,9 +33,10 @@ const serviceCardVariants = {
 
 export default function Services() {
   const [activeService, setActiveService] = useState(null)
+  const shouldReduceMotion = useReducedMotion()
 
   return (
-    <section id="services" className="py-24">
+    <section id="services" className="services-section py-16 md:py-24">
       <div className="section-shell">
         <div className="max-w-3xl">
           <p className="section-kicker">Signature Services</p>
@@ -38,20 +46,22 @@ export default function Services() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          className="services-grid mt-8 grid gap-5 md:mt-12 md:grid-cols-2 lg:grid-cols-3"
+          initial={shouldReduceMotion ? false : 'hidden'}
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.04, margin: '0px 0px 16% 0px' }}
+          variants={servicesGridVariants}
+        >
           {services.map((service, index) => {
             const Icon = icons[index % icons.length]
             return (
               <motion.article
                 key={service.title}
-                className="service-card glass group overflow-hidden rounded-3xl p-3 transition hover:border-[var(--gold)]"
-                custom={index}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.12, margin: '0px 0px -8% 0px' }}
+                className="service-card glass group overflow-hidden rounded-3xl p-3 transition-colors duration-300 hover:border-[var(--gold)]"
                 variants={serviceCardVariants}
-                whileHover={{ y: -8, rotateX: 2, rotateY: index % 2 === 0 ? -2 : 2 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={shouldReduceMotion ? undefined : { y: -5 }}
+                whileTap={shouldReduceMotion ? undefined : { scale: 0.985 }}
               >
                 <button
                   className="service-image-button photo-wrap aspect-[4/3] rounded-2xl"
@@ -78,7 +88,7 @@ export default function Services() {
               </motion.article>
             )
           })}
-        </div>
+        </motion.div>
       </div>
 
       {activeService && (

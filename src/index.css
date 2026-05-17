@@ -243,6 +243,27 @@ select option {
 
 .service-card {
   transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.services-section {
+  position: relative;
+}
+
+.services-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(216, 170, 79, 0.12), transparent 20rem),
+    radial-gradient(circle at 88% 34%, rgba(255, 226, 163, 0.07), transparent 18rem);
+}
+
+.services-section > .section-shell {
+  position: relative;
+  z-index: 1;
 }
 
 .service-image-button {
@@ -252,6 +273,7 @@ select option {
   padding: 0;
   color: inherit;
   cursor: zoom-in;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .service-image-button::after {
@@ -305,6 +327,13 @@ select option {
   max-height: min(78vh, 820px);
   display: block;
   object-fit: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo,
+  .service-image-hint {
+    transition-duration: 1ms;
+  }
 }
 
 .intro-splash {
@@ -746,6 +775,15 @@ select option {
 
   .service-card {
     border-color: rgba(216, 170, 79, 0.28);
+  }
+
+  .services-section {
+    padding-top: 3.75rem;
+    padding-bottom: 4.25rem;
+  }
+
+  .services-grid {
+    margin-top: 1.75rem;
   }
 
   .service-image-hint {

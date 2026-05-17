@@ -1,0 +1,1191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mounika Makeover Admin</title>
+    <style>
+      :root {
+        --rose: #d4537e;
+        --rose-dark: #a93a60;
+        --cream: #faf8f6;
+        --gold: #b8860b;
+        --ink: #2f2228;
+        --muted: #7b6870;
+        --line: rgba(184, 134, 11, 0.2);
+        --card: rgba(255, 255, 255, 0.88);
+        --success: #127a45;
+        --danger: #b42335;
+        --shadow: 0 24px 70px rgba(95, 52, 68, 0.18);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 12% 10%, rgba(212, 83, 126, 0.18), transparent 22rem),
+          radial-gradient(circle at 84% 18%, rgba(184, 134, 11, 0.14), transparent 20rem),
+          linear-gradient(135deg, #fff7fa, var(--cream));
+        color: var(--ink);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+      }
+
+      button {
+        border: 0;
+        cursor: pointer;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .lock-screen {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 1.25rem;
+      }
+
+      .lock-card {
+        width: min(100%, 410px);
+        border: 1px solid rgba(184, 134, 11, 0.26);
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.76);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(18px);
+        padding: 2rem;
+        text-align: center;
+        transition: opacity 360ms ease, transform 360ms ease;
+      }
+
+      .lock-card.fade-out {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.985);
+      }
+
+      .brand-mark {
+        width: 72px;
+        height: 72px;
+        margin: 0 auto 1rem;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        color: #fff;
+        background: linear-gradient(135deg, var(--rose), var(--gold));
+        box-shadow: 0 16px 34px rgba(212, 83, 126, 0.28);
+        font-size: 1.55rem;
+        font-weight: 800;
+      }
+
+      .brand-title {
+        margin: 0;
+        font-size: 1.75rem;
+        line-height: 1.1;
+      }
+
+      .brand-subtitle {
+        margin: 0.55rem 0 1.35rem;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .pin-dots {
+        display: flex;
+        justify-content: center;
+        gap: 0.7rem;
+        margin: 1.15rem 0;
+      }
+
+      .pin-dot {
+        width: 13px;
+        height: 13px;
+        border: 1px solid rgba(47, 34, 40, 0.28);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.7);
+        transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+      }
+
+      .pin-dot.filled {
+        border-color: var(--rose);
+        background: var(--rose);
+        transform: scale(1.08);
+      }
+
+      .keypad {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+        margin-top: 1.35rem;
+      }
+
+      .key {
+        min-height: 58px;
+        border-radius: 18px;
+        background: #fff;
+        color: var(--ink);
+        box-shadow: 0 10px 24px rgba(95, 52, 68, 0.1);
+        font-size: 1.2rem;
+        font-weight: 750;
+        transition: transform 140ms ease, background 140ms ease, box-shadow 140ms ease;
+      }
+
+      .key:hover,
+      .key:focus-visible {
+        background: #fff0f5;
+        transform: translateY(-2px);
+        outline: none;
+      }
+
+      .key:active {
+        transform: translateY(1px) scale(0.99);
+      }
+
+      .key.utility {
+        color: var(--rose-dark);
+        font-size: 0.95rem;
+      }
+
+      .error {
+        min-height: 1.35rem;
+        margin: 0.75rem 0 0;
+        color: var(--danger);
+        font-weight: 700;
+      }
+
+      .shake {
+        animation: shake 320ms ease;
+      }
+
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-10px); }
+        40% { transform: translateX(10px); }
+        60% { transform: translateX(-7px); }
+        80% { transform: translateX(7px); }
+      }
+
+      .admin-app {
+        min-height: 100vh;
+        opacity: 0;
+        transform: translateY(12px);
+        transition: opacity 380ms ease, transform 380ms ease;
+      }
+
+      .admin-app.ready {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-bottom: 1px solid var(--line);
+        background: rgba(250, 248, 246, 0.88);
+        backdrop-filter: blur(16px);
+      }
+
+      .topbar-inner {
+        width: min(1180px, calc(100% - 28px));
+        min-height: 72px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .topbar h1 {
+        margin: 0;
+        font-size: clamp(1.1rem, 4vw, 1.45rem);
+      }
+
+      .logout {
+        min-height: 42px;
+        border-radius: 999px;
+        padding: 0 1rem;
+        color: #fff;
+        background: var(--ink);
+        font-weight: 750;
+      }
+
+      .shell {
+        width: min(1180px, calc(100% - 28px));
+        margin: 0 auto;
+        padding: 2rem 0 4rem;
+      }
+
+      .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+        margin-bottom: 1.35rem;
+      }
+
+      .tab-button {
+        min-height: 46px;
+        border-radius: 999px;
+        padding: 0 1.05rem;
+        color: var(--muted);
+        background: #fff;
+        font-weight: 800;
+        box-shadow: 0 8px 24px rgba(95, 52, 68, 0.08);
+        transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+      }
+
+      .tab-button.active {
+        color: #fff;
+        background: linear-gradient(135deg, var(--rose), var(--gold));
+      }
+
+      .panel {
+        display: none;
+      }
+
+      .panel.active {
+        display: block;
+        animation: panelIn 260ms ease;
+      }
+
+      @keyframes panelIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .form-card,
+      .data-card {
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: var(--card);
+        box-shadow: var(--shadow);
+        padding: 1.25rem;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .field.full {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.45rem;
+        color: var(--muted);
+        font-size: 0.86rem;
+        font-weight: 800;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        min-height: 46px;
+        border: 1px solid rgba(47, 34, 40, 0.12);
+        border-radius: 14px;
+        background: #fff;
+        color: var(--ink);
+        padding: 0.8rem 0.9rem;
+        outline: none;
+        transition: border-color 160ms ease, box-shadow 160ms ease;
+      }
+
+      textarea {
+        min-height: 116px;
+        resize: vertical;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--rose);
+        box-shadow: 0 0 0 4px rgba(212, 83, 126, 0.12);
+      }
+
+      .notice {
+        grid-column: 1 / -1;
+        border: 1px solid rgba(18, 122, 69, 0.18);
+        border-radius: 16px;
+        background: rgba(18, 122, 69, 0.08);
+        color: #0f633a;
+        padding: 0.85rem 1rem;
+        font-size: 0.92rem;
+        font-weight: 700;
+        line-height: 1.5;
+      }
+
+      .drop-zone {
+        min-height: 160px;
+        display: grid;
+        place-items: center;
+        border: 2px dashed rgba(212, 83, 126, 0.36);
+        border-radius: 20px;
+        background: rgba(212, 83, 126, 0.06);
+        color: var(--muted);
+        text-align: center;
+        padding: 1rem;
+        transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+      }
+
+      .drop-zone.dragover {
+        border-color: var(--rose);
+        background: rgba(212, 83, 126, 0.12);
+        transform: scale(0.995);
+      }
+
+      .drop-zone strong {
+        display: block;
+        color: var(--ink);
+        font-size: 1rem;
+      }
+
+      .preview-grid,
+      .gallery-grid,
+      .reviews-grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .preview-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        margin-top: 1rem;
+      }
+
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        margin-top: 1.25rem;
+      }
+
+      .reviews-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        margin-top: 1.25rem;
+      }
+
+      .preview {
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+        border-radius: 16px;
+        background: #fff;
+      }
+
+      .preview img,
+      .photo-card img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-top: 1rem;
+      }
+
+      .primary,
+      .secondary,
+      .delete {
+        min-height: 44px;
+        border-radius: 999px;
+        padding: 0 1rem;
+        font-weight: 850;
+        transition: transform 150ms ease, opacity 150ms ease;
+      }
+
+      .primary {
+        color: #fff;
+        background: linear-gradient(135deg, var(--rose), var(--gold));
+      }
+
+      .secondary {
+        color: var(--rose-dark);
+        background: #fff;
+        border: 1px solid rgba(212, 83, 126, 0.18);
+      }
+
+      .delete {
+        min-height: 38px;
+        color: var(--danger);
+        background: rgba(180, 35, 53, 0.08);
+      }
+
+      .primary:hover,
+      .secondary:hover,
+      .delete:hover {
+        transform: translateY(-1px);
+      }
+
+      .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin: 1.5rem 0 0;
+      }
+
+      .section-head h2 {
+        margin: 0;
+        font-size: 1.15rem;
+      }
+
+      .photo-card {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 14px 34px rgba(95, 52, 68, 0.11);
+      }
+
+      .photo-media {
+        aspect-ratio: 4 / 3;
+        background: #f6ecef;
+      }
+
+      .photo-body,
+      .review-body {
+        padding: 0.95rem;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 26px;
+        border-radius: 999px;
+        background: rgba(184, 134, 11, 0.12);
+        color: #7a5707;
+        padding: 0 0.65rem;
+        font-size: 0.75rem;
+        font-weight: 850;
+      }
+
+      .caption {
+        margin: 0.65rem 0 0;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .review-card {
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 14px 34px rgba(95, 52, 68, 0.11);
+      }
+
+      .review-top {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 0.85rem;
+      }
+
+      .avatar {
+        width: 46px;
+        height: 46px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        border-radius: 999px;
+        color: #fff;
+        background: linear-gradient(135deg, var(--rose), var(--gold));
+        font-weight: 900;
+      }
+
+      .review-name {
+        margin: 0;
+        font-weight: 900;
+      }
+
+      .stars {
+        display: flex;
+        gap: 0.18rem;
+        margin: 0.55rem 0;
+      }
+
+      .star {
+        color: rgba(184, 134, 11, 0.28);
+        background: transparent;
+        padding: 0;
+        font-size: 1.8rem;
+        line-height: 1;
+        transition: color 120ms ease, transform 120ms ease;
+      }
+
+      .star.active {
+        color: var(--gold);
+      }
+
+      .star:hover {
+        transform: scale(1.08);
+      }
+
+      .date-text {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .empty {
+        border: 1px dashed rgba(47, 34, 40, 0.16);
+        border-radius: 18px;
+        color: var(--muted);
+        padding: 1.25rem;
+        text-align: center;
+      }
+
+      .toast {
+        position: fixed;
+        right: 1rem;
+        bottom: 1rem;
+        z-index: 30;
+        border-radius: 999px;
+        color: #fff;
+        background: var(--success);
+        box-shadow: 0 16px 38px rgba(18, 122, 69, 0.24);
+        padding: 0.85rem 1rem;
+        font-weight: 850;
+        opacity: 0;
+        transform: translateY(10px);
+        pointer-events: none;
+        transition: opacity 220ms ease, transform 220ms ease;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 720px) {
+        .lock-card {
+          padding: 1.35rem;
+          border-radius: 22px;
+        }
+
+        .key {
+          min-height: 54px;
+        }
+
+        .topbar-inner {
+          min-height: 66px;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section-head {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .section-head .secondary {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main id="lockScreen" class="lock-screen">
+      <section id="lockCard" class="lock-card" aria-labelledby="lockTitle">
+        <div class="brand-mark" aria-hidden="true">MM</div>
+        <h1 id="lockTitle" class="brand-title">Mounika Makeover</h1>
+        <p class="brand-subtitle">Secure admin access for portfolio photos and client reviews.</p>
+        <div id="pinDots" class="pin-dots" aria-label="PIN progress"></div>
+        <p id="lockError" class="error" role="alert" aria-live="polite"></p>
+        <div id="keypad" class="keypad" aria-label="Numeric keypad"></div>
+      </section>
+    </main>
+
+    <section id="adminApp" class="admin-app hidden" aria-label="Mounika Makeover admin panel">
+      <header class="topbar">
+        <div class="topbar-inner">
+          <h1 id="adminBrand">Mounika Makeover Admin</h1>
+          <button id="logoutButton" class="logout" type="button">Logout</button>
+        </div>
+      </header>
+
+      <div class="shell">
+        <nav class="tabs" aria-label="Admin tabs">
+          <button class="tab-button active" type="button" data-tab="portfolioPanel">Portfolio Photos</button>
+          <button class="tab-button" type="button" data-tab="reviewsPanel">Reviews</button>
+        </nav>
+
+        <section id="portfolioPanel" class="panel active">
+          <form id="portfolioForm" class="form-card">
+            <div class="form-grid">
+              <p class="notice">Your passkey is never stored or transmitted. Validation uses a one-way SHA-256 hash in your browser only.</p>
+              <div class="field">
+                <label for="portfolioCategory">Category</label>
+                <select id="portfolioCategory" required></select>
+              </div>
+              <div class="field">
+                <label for="portfolioCaption">Caption optional</label>
+                <input id="portfolioCaption" type="text" maxlength="90" placeholder="Soft bridal look in Proddatur" />
+              </div>
+              <div class="field full">
+                <label>Upload images</label>
+                <div id="dropZone" class="drop-zone" tabindex="0">
+                  <div>
+                    <strong>Drop photos here or tap to choose</strong>
+                    <span>JPG, PNG, WebP. Multiple files accepted. Max 5MB each.</span>
+                  </div>
+                </div>
+                <input id="photoInput" class="hidden" type="file" accept="image/jpeg,image/png,image/webp" multiple />
+                <div id="previewGrid" class="preview-grid"></div>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="primary" type="submit">Add to Portfolio</button>
+              <button id="clearPreviews" class="secondary" type="button">Clear Selected</button>
+            </div>
+          </form>
+
+          <div class="section-head">
+            <h2>Portfolio Gallery</h2>
+            <button id="exportPortfolio" class="secondary" type="button">Export JSON</button>
+          </div>
+          <div id="galleryGrid" class="gallery-grid"></div>
+        </section>
+
+        <section id="reviewsPanel" class="panel">
+          <form id="reviewForm" class="form-card">
+            <div class="form-grid">
+              <p class="notice">Your passkey is never stored or transmitted. Validation uses a one-way SHA-256 hash in your browser only.</p>
+              <div class="field">
+                <label for="brideName">Bride's name</label>
+                <input id="brideName" type="text" maxlength="60" required placeholder="Bride name" />
+              </div>
+              <div class="field">
+                <label for="occasion">Wedding occasion</label>
+                <select id="occasion" required>
+                  <option>Bridal</option>
+                  <option>Engagement</option>
+                  <option>Reception</option>
+                  <option>Haldi/Sangeet</option>
+                  <option>Party</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Rating</label>
+                <div id="ratingStars" class="stars" aria-label="Rating selector"></div>
+              </div>
+              <div class="field">
+                <label for="reviewDate">Review date</label>
+                <input id="reviewDate" type="date" required />
+              </div>
+              <div class="field full">
+                <label for="reviewText">Review text</label>
+                <textarea id="reviewText" maxlength="420" required placeholder="Share the bride's review"></textarea>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="primary" type="submit">Save Review</button>
+            </div>
+          </form>
+
+          <div class="section-head">
+            <h2>Saved Reviews</h2>
+            <button id="exportReviews" class="secondary" type="button">Export JSON</button>
+          </div>
+          <div id="reviewsGrid" class="reviews-grid"></div>
+        </section>
+      </div>
+    </section>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      /*
+        CONFIG
+
+        SECURITY NOTE:
+        This admin page checks the passkey in the browser, so it is useful for a
+        lightweight private admin page, but it is not the same as server-side login.
+        Never write the real passkey in this file. Only store the SHA-256 hash below.
+
+        To change the passkey, generate a new SHA-256 hash in the browser console:
+        crypto.subtle.digest("SHA-256", new TextEncoder().encode("TYPE_NEW_PASSKEY_HERE"))
+          .then(buffer => [...new Uint8Array(buffer)].map(byte => byte.toString(16).padStart(2, "0")).join(""))
+          .then(hash => copy(hash))
+        Paste the copied hash into PASSKEY_HASH. Do not paste the passkey itself into this file.
+      */
+      // Only the one-way SHA-256 hash belongs here. The actual passkey must stay private.
+      const PASSKEY_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
+
+      // Owner-editable display text and dropdown values.
+      const BUSINESS_NAME = "Mounika Makeover";
+      const PORTFOLIO_CATEGORIES = [
+        "Bridal makeup",
+        "HD makeup",
+        "Airbrush makeup",
+        "Engagement",
+        "Reception",
+        "Haldi/Sangeet",
+        "Party makeup",
+        "Before & After"
+      ];
+
+      const STORAGE_KEYS = {
+        portfolio: "mounika_admin_portfolio",
+        reviews: "mounika_admin_reviews"
+      };
+
+      const state = {
+        enteredDigits: "",
+        wrongAttempts: 0,
+        lockUntil: 0,
+        lockTimer: null,
+        selectedFiles: [],
+        portfolio: [],
+        reviews: [],
+        rating: 5,
+        hoverRating: 0
+      };
+
+      const lockScreen = document.getElementById("lockScreen");
+      const lockCard = document.getElementById("lockCard");
+      const adminApp = document.getElementById("adminApp");
+      const lockError = document.getElementById("lockError");
+      const pinDots = document.getElementById("pinDots");
+      const keypad = document.getElementById("keypad");
+      const toast = document.getElementById("toast");
+
+      document.getElementById("adminBrand").textContent = `${BUSINESS_NAME} Admin`;
+      document.getElementById("lockTitle").textContent = BUSINESS_NAME;
+
+      init();
+
+      function init() {
+        hydrateData();
+        renderPinDots();
+        renderKeypad();
+        renderCategories();
+        renderRatingStars();
+        renderGallery();
+        renderReviews();
+        bindEvents();
+        document.getElementById("reviewDate").valueAsDate = new Date();
+      }
+
+      function bindEvents() {
+        document.getElementById("logoutButton").addEventListener("click", logout);
+        document.querySelectorAll(".tab-button").forEach(button => {
+          button.addEventListener("click", () => switchTab(button.dataset.tab));
+        });
+
+        const dropZone = document.getElementById("dropZone");
+        const photoInput = document.getElementById("photoInput");
+
+        dropZone.addEventListener("click", () => photoInput.click());
+        dropZone.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            photoInput.click();
+          }
+        });
+        dropZone.addEventListener("dragover", event => {
+          event.preventDefault();
+          dropZone.classList.add("dragover");
+        });
+        dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+        dropZone.addEventListener("drop", event => {
+          event.preventDefault();
+          dropZone.classList.remove("dragover");
+          handleFiles([...event.dataTransfer.files]);
+        });
+        photoInput.addEventListener("change", event => handleFiles([...event.target.files]));
+
+        document.getElementById("clearPreviews").addEventListener("click", () => {
+          state.selectedFiles = [];
+          photoInput.value = "";
+          renderPreviews();
+        });
+
+        document.getElementById("portfolioForm").addEventListener("submit", addPortfolioItems);
+        document.getElementById("reviewForm").addEventListener("submit", addReview);
+        document.getElementById("exportPortfolio").addEventListener("click", () => exportJson("portfolio-data.json", state.portfolio));
+        document.getElementById("exportReviews").addEventListener("click", () => exportJson("reviews-data.json", state.reviews));
+      }
+
+      function renderPinDots() {
+        pinDots.innerHTML = "";
+        for (let index = 0; index < 6; index += 1) {
+          const dot = document.createElement("span");
+          dot.className = `pin-dot ${index < state.enteredDigits.length ? "filled" : ""}`;
+          pinDots.appendChild(dot);
+        }
+      }
+
+      function renderKeypad() {
+        const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "Clear", "0", "⌫"];
+        keypad.innerHTML = "";
+        keys.forEach(key => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `key ${key.length > 1 ? "utility" : ""}`;
+          button.textContent = key;
+          button.addEventListener("click", () => handleKey(key));
+          keypad.appendChild(button);
+        });
+      }
+
+      function handleKey(key) {
+        if (Date.now() < state.lockUntil) return;
+        if (key === "Clear") {
+          clearPin();
+          return;
+        }
+        if (key === "⌫") {
+          state.enteredDigits = state.enteredDigits.slice(0, -1);
+          renderPinDots();
+          return;
+        }
+        if (state.enteredDigits.length >= 6) return;
+        state.enteredDigits += key;
+        renderPinDots();
+        if (state.enteredDigits.length === 6) verifyPin();
+      }
+
+      async function verifyPin() {
+        const hash = await sha256(state.enteredDigits);
+        if (hash === PASSKEY_HASH) {
+          state.wrongAttempts = 0;
+          openAdmin();
+        } else {
+          state.wrongAttempts += 1;
+          wrongPin();
+        }
+      }
+
+      async function sha256(value) {
+        const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+        return [...new Uint8Array(buffer)].map(byte => byte.toString(16).padStart(2, "0")).join("");
+      }
+
+      function wrongPin() {
+        lockCard.classList.remove("shake");
+        void lockCard.offsetWidth;
+        lockCard.classList.add("shake");
+        lockError.textContent = state.wrongAttempts >= 5 ? "" : "Wrong passkey. Please try again.";
+        window.setTimeout(clearPin, 2000);
+        if (state.wrongAttempts >= 5) startLockout();
+      }
+
+      function clearPin() {
+        state.enteredDigits = "";
+        renderPinDots();
+      }
+
+      function startLockout() {
+        state.lockUntil = Date.now() + 60000;
+        updateLockCountdown();
+        window.clearInterval(state.lockTimer);
+        state.lockTimer = window.setInterval(updateLockCountdown, 1000);
+      }
+
+      function updateLockCountdown() {
+        const remaining = Math.ceil((state.lockUntil - Date.now()) / 1000);
+        if (remaining <= 0) {
+          window.clearInterval(state.lockTimer);
+          state.lockTimer = null;
+          state.wrongAttempts = 0;
+          lockError.textContent = "";
+          clearPin();
+          return;
+        }
+        lockError.textContent = `Too many wrong attempts. Try again in ${remaining}s.`;
+      }
+
+      function openAdmin() {
+        lockCard.classList.add("fade-out");
+        window.setTimeout(() => {
+          lockScreen.classList.add("hidden");
+          adminApp.classList.remove("hidden");
+          requestAnimationFrame(() => adminApp.classList.add("ready"));
+        }, 320);
+      }
+
+      function logout() {
+        state.enteredDigits = "";
+        adminApp.classList.remove("ready");
+        window.setTimeout(() => {
+          adminApp.classList.add("hidden");
+          lockScreen.classList.remove("hidden");
+          lockCard.classList.remove("fade-out");
+          renderPinDots();
+        }, 240);
+      }
+
+      function switchTab(tabId) {
+        document.querySelectorAll(".tab-button").forEach(button => {
+          button.classList.toggle("active", button.dataset.tab === tabId);
+        });
+        document.querySelectorAll(".panel").forEach(panel => {
+          panel.classList.toggle("active", panel.id === tabId);
+        });
+      }
+
+      function renderCategories() {
+        const select = document.getElementById("portfolioCategory");
+        select.innerHTML = PORTFOLIO_CATEGORIES.map(category => `<option>${escapeHtml(category)}</option>`).join("");
+      }
+
+      function handleFiles(files) {
+        const valid = [];
+        files.forEach(file => {
+          const allowed = ["image/jpeg", "image/png", "image/webp"].includes(file.type);
+          const sizeOk = file.size <= 5 * 1024 * 1024;
+          if (allowed && sizeOk) valid.push(file);
+        });
+        state.selectedFiles = [...state.selectedFiles, ...valid];
+        renderPreviews();
+      }
+
+      function renderPreviews() {
+        const grid = document.getElementById("previewGrid");
+        grid.innerHTML = "";
+        state.selectedFiles.forEach(file => {
+          const preview = document.createElement("div");
+          preview.className = "preview";
+          const image = document.createElement("img");
+          image.alt = file.name;
+          image.src = URL.createObjectURL(file);
+          image.onload = () => URL.revokeObjectURL(image.src);
+          preview.appendChild(image);
+          grid.appendChild(preview);
+        });
+      }
+
+      async function addPortfolioItems(event) {
+        event.preventDefault();
+        if (!state.selectedFiles.length) return;
+        const category = document.getElementById("portfolioCategory").value;
+        const caption = document.getElementById("portfolioCaption").value.trim();
+        const items = await Promise.all(state.selectedFiles.map(async file => ({
+          id: crypto.randomUUID(),
+          category,
+          caption,
+          image: await fileToBase64(file),
+          fileName: file.name,
+          createdAt: new Date().toISOString()
+        })));
+        state.portfolio = [...items, ...state.portfolio];
+        saveData();
+        state.selectedFiles = [];
+        document.getElementById("photoInput").value = "";
+        document.getElementById("portfolioCaption").value = "";
+        renderPreviews();
+        renderGallery();
+        showToast("✓ Added to portfolio!");
+      }
+
+      function renderGallery() {
+        const grid = document.getElementById("galleryGrid");
+        if (!state.portfolio.length) {
+          grid.innerHTML = `<div class="empty">No portfolio photos added yet.</div>`;
+          return;
+        }
+        grid.innerHTML = "";
+        state.portfolio.forEach(item => {
+          const card = document.createElement("article");
+          card.className = "photo-card";
+          card.innerHTML = `
+            <div class="photo-media"><img src="${item.image}" alt="${escapeHtml(item.caption || item.category)}" /></div>
+            <div class="photo-body">
+              <span class="badge">${escapeHtml(item.category)}</span>
+              ${item.caption ? `<p class="caption">${escapeHtml(item.caption)}</p>` : ""}
+              <div class="actions"><button class="delete" type="button" data-id="${item.id}" data-kind="photo">Delete</button></div>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+        grid.querySelectorAll("[data-kind='photo']").forEach(button => {
+          button.addEventListener("click", () => deletePortfolio(button.dataset.id));
+        });
+      }
+
+      function deletePortfolio(id) {
+        state.portfolio = state.portfolio.filter(item => item.id !== id);
+        saveData();
+        renderGallery();
+      }
+
+      function renderRatingStars() {
+        const stars = document.getElementById("ratingStars");
+        stars.innerHTML = "";
+        for (let value = 1; value <= 5; value += 1) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "star";
+          button.textContent = "★";
+          button.setAttribute("aria-label", `${value} stars`);
+          button.addEventListener("mouseenter", () => {
+            state.hoverRating = value;
+            updateStars();
+          });
+          button.addEventListener("mouseleave", () => {
+            state.hoverRating = 0;
+            updateStars();
+          });
+          button.addEventListener("click", () => {
+            state.rating = value;
+            updateStars();
+          });
+          stars.appendChild(button);
+        }
+        updateStars();
+      }
+
+      function updateStars() {
+        const displayRating = state.hoverRating || state.rating;
+        document.querySelectorAll("#ratingStars .star").forEach((star, index) => {
+          star.classList.toggle("active", index < displayRating);
+        });
+      }
+
+      function addReview(event) {
+        event.preventDefault();
+        const review = {
+          id: crypto.randomUUID(),
+          name: document.getElementById("brideName").value.trim(),
+          occasion: document.getElementById("occasion").value,
+          rating: state.rating,
+          text: document.getElementById("reviewText").value.trim(),
+          date: document.getElementById("reviewDate").value,
+          createdAt: new Date().toISOString()
+        };
+        state.reviews = [review, ...state.reviews];
+        saveData();
+        event.target.reset();
+        document.getElementById("reviewDate").valueAsDate = new Date();
+        state.rating = 5;
+        updateStars();
+        renderReviews();
+        showToast("✓ Review saved!");
+      }
+
+      function renderReviews() {
+        const grid = document.getElementById("reviewsGrid");
+        if (!state.reviews.length) {
+          grid.innerHTML = `<div class="empty">No reviews saved yet.</div>`;
+          return;
+        }
+        grid.innerHTML = "";
+        state.reviews.forEach(review => {
+          const card = document.createElement("article");
+          card.className = "review-card";
+          card.innerHTML = `
+            <div class="review-body">
+              <div class="review-top">
+                <div class="avatar">${escapeHtml(getInitials(review.name))}</div>
+                <div>
+                  <p class="review-name">${escapeHtml(review.name)}</p>
+                  <span class="badge">${escapeHtml(review.occasion)}</span>
+                </div>
+              </div>
+              <div class="stars" aria-label="${review.rating} star rating">${"★".repeat(review.rating)}${"☆".repeat(5 - review.rating)}</div>
+              <p class="caption">${escapeHtml(review.text)}</p>
+              <p class="date-text">${formatDate(review.date)}</p>
+              <div class="actions"><button class="delete" type="button" data-id="${review.id}" data-kind="review">Delete</button></div>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+        grid.querySelectorAll("[data-kind='review']").forEach(button => {
+          button.addEventListener("click", () => deleteReview(button.dataset.id));
+        });
+      }
+
+      function deleteReview(id) {
+        state.reviews = state.reviews.filter(item => item.id !== id);
+        saveData();
+        renderReviews();
+      }
+
+      function hydrateData() {
+        state.portfolio = readStorage(STORAGE_KEYS.portfolio);
+        state.reviews = readStorage(STORAGE_KEYS.reviews);
+      }
+
+      function readStorage(key) {
+        try {
+          return JSON.parse(localStorage.getItem(key) || "[]");
+        } catch {
+          return [];
+        }
+      }
+
+      function saveData() {
+        localStorage.setItem(STORAGE_KEYS.portfolio, JSON.stringify(state.portfolio));
+        localStorage.setItem(STORAGE_KEYS.reviews, JSON.stringify(state.reviews));
+      }
+
+      function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function exportJson(fileName, data) {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = fileName;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("show");
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 2200);
+      }
+
+      function getInitials(name) {
+        return name
+          .split(/\s+/)
+          .filter(Boolean)
+          .slice(0, 2)
+          .map(part => part[0])
+          .join("")
+          .toUpperCase();
+      }
+
+      function formatDate(value) {
+        if (!value) return "";
+        return new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(new Date(value));
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, char => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        }[char]));
+      }
+    </script>
+  </body>
+</html>
